@@ -28,6 +28,8 @@ uint16_t loopCount0=0;
 uint16_t loopCount1=0;
 uint16_t loopCount2=0;
 
+uint16_t spicounter=0;
+
 #define TWI_PORT		PORTC
 #define TWI_PIN		PINC
 #define TWI_DDR		DDRC
@@ -83,10 +85,11 @@ void spi_init(void) // SPI-Pins aktivieren
 
 void slaveinit(void)
 {
-
-	//LCD
+   
+   //LCD
    LOOPLED_DDR |= (1<<LOOPLED_PIN);
-
+   spi_init();
+   
 }
 
 int main (void)

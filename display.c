@@ -86,6 +86,8 @@ extern volatile uint16_t      posregister[8][8]; // Aktueller screen: werte fuer
 
 extern volatile uint16_t      cursorpos[8][8]; // Aktueller screen: werte fuer page und daraufliegende col fuer cursor (hex). geladen aus progmem
 
+extern uint16_t spicounter;
+
 // 
 extern volatile uint16_t      updatecounter; // Zaehler fuer Einschalten
 /*
@@ -1080,8 +1082,9 @@ void display_back_char (void)
 //Writes one byte to data or cmd register
 //
 //##############################################################################################
-void display_write_byte(unsigned cmd_data, unsigned char data) 
+uint8_t display_write_byte(unsigned cmd_data, unsigned char data) 
 {
+   /*
    if(cmd_data == 0)
 	{
 		A0_HI;
@@ -1093,26 +1096,34 @@ void display_write_byte(unsigned cmd_data, unsigned char data)
    
    
    spi_out(data);
-  
-   /*
-	DOG_PORT &= ~(1<<SPI_SS);
+    */
+   
+   // Hardware-SPI
+   
+   SPI_CS_LO();
+   
 	if(cmd_data == 0)
 	{
-		PORT_A0 |= (1<<PIN_A0);
+      SPI_A0_HI();
+      //DOG_SPI_PORT |= (1<<DOG_SPI_A0);
 	}
 	else
 	{
-		PORT_A0 &= ~(1<<PIN_A0);
+      SPI_A0_LO();
+      //DOG_SPI_PORT &= ~(1<<DOG_SPI_A0);
 	}
    
 //   
-   
+   spicounter = MAX_SPI_COUNT;
 	SPDR = data;
-	while(!(SPSR & (1<<SPIF)));
+	while((!(SPSR & (1<<SPIF))) && spicounter)
+   {
+      spicounter--;
+   }
    
    _delay_us(1);
-	PORTB |= (1<<SPI_SS);
-    */
+   SPI_CS_HI();
+   return(spicounter > 0);
 }
 
 //##############################################################################################
