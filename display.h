@@ -45,11 +45,25 @@
 
 
 // Hardware-SPI
+
+#define DOG_SPI_PORT    PORTB
+#define DOG_SPI_DDR     DDRB
+
+#define DOG_SPI_A0       0
+#define DOG_SPI_PWM      1
 #define DOG_SPI_CS       2 // SS
 #define DOG_SPI_SCK      5 // SCK
 #define DOG_SPI_MOSI     3 // MOSI
-#define DOG_SPI_PWM      0
 
+
+
+#define SPI_CS_HI()   DOG_SPI_PORT |= (1<<DOG_SPI_CS)
+#define SPI_CS_LO()   DOG_SPI_PORT &= ~(1<< DOG_SPI_CS)
+
+#define SPI_A0_HI()   DOG_SPI_PORT |= (1<<DOG_SPI_A0)
+#define SPI_A0_LO()   DOG_SPI_PORT &= ~(1<< DOG_SPI_A0)
+
+#define MAX_SPI_COUNT 100
 
 #define MAXSPANNUNG  756
 #define MINSPANNUNG  500
@@ -80,6 +94,7 @@
 #define LCD_SET_OUTPUT_CS()  DDR_CS  |= _BV(PIN_CS)
 #define LCD_SELECT()         PORT_CS &= ~_BV(PIN_CS)
 #define LCD_UNSELECT()       spi_wait_for_idle(); PORT_CS |= _BV(PIN_CS)
+
 
 
 // http://www.cczwei-forum.de/cc2/thread.php?postid=49733#post49733
@@ -131,7 +146,7 @@ void display_mem(PGM_P pointer);
 void display_clear(void);
 void display_go_to (unsigned char, unsigned char);
 void display_back_char (void);
-void display_write_byte(unsigned cmd_data, unsigned char data);
+uint8_t display_write_byte(unsigned cmd_data, unsigned char data);
 
 void display_write_char(unsigned char);
 void display_write_propchar(unsigned char c, uint8_t prop);
