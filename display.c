@@ -140,6 +140,8 @@ const char marke_dick[8]=
 
 
 
+// EA DOGL128 // Text
+/*
 const volatile char DISPLAY_INIT[] =
 {
    0x40,// Display start line set --> 0
@@ -163,6 +165,11 @@ const volatile char DISPLAY_INIT[] =
    0x00, // ...
    0xAF
 };  // Display on/off
+*/
+// von DOGM204_SSD1803A_SPI
+
+const char DISPLAY_INIT[] = {0x3A,0x09,0x06,0x1E,0x39,0x1B,0x6E,0x57,0x72,0x38,0x0F};
+
 
 //const char DISPLAY_INIT[] = {0xC8,0xA1,0xA6,0xA2,0x2F,0x26,0x81,0x25,0xAC,0x00,0xAF};
 
@@ -1112,17 +1119,18 @@ uint8_t display_write_byte(unsigned cmd_data, unsigned char data)
       SPI_A0_LO();
       //DOG_SPI_PORT &= ~(1<<DOG_SPI_A0);
 	}
-   
-//   
+     OSZI_B_LO(); 
    spicounter = MAX_SPI_COUNT;
 	SPDR = data;
 	while((!(SPSR & (1<<SPIF))) && spicounter)
    {
+      OSZI_A_TOGG();
       spicounter--;
    }
-   
+   OSZI_B_HI(); 
    _delay_us(1);
    SPI_CS_HI();
+   
    return(spicounter > 0);
 }
 
@@ -1130,7 +1138,7 @@ uint8_t display_write_byte(unsigned cmd_data, unsigned char data)
 //Init LC-Display
 //
 //##############################################################################################
-void display_init() 
+uint8_t display_init() 
 {
    /*
 	//Set TIMER0 (PWM OC2 Pin)
@@ -1138,17 +1146,29 @@ void display_init()
 	TCCR2A |= (1<<WGM21|1<<WGM20|1<<COM2A1|1<<CS20);
 	OCR2A = 50;
 */
+   SPI_RST_HI();
+   SPI_CS_HI();
+   _delay_ms(1);
+   SPI_CS_LO();
+   _delay_ms(1);
+   SPI_RST_LO(); // reset
+   _delay_ms(1);
+   SPI_RST_HI();
+   
 	_delay_us(10);
 	//send 11 init commands to Display
-   
+   uint8_t initerr = 0;
 	for (unsigned char tmp = 0;tmp < 14;tmp++)
 	{
-		display_write_byte(CMD,DISPLAY_INIT[tmp]);
-      _delay_us(10);
+      
+      uint8_t a = display_write_byte(CMD,DISPLAY_INIT[tmp]);
+      initerr += a;
+      _delay_us(1);
 	}
+   SPI_CS_HI();
 	display_clear();
 	
-	return;
+	return initerr;
     
 }
 

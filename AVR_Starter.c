@@ -89,6 +89,15 @@ void slaveinit(void)
    //LCD
    LOOPLED_DDR |= (1<<LOOPLED_PIN);
    spi_init();
+   _delay_ms(1);
+   
+   DOG_SPI_DDR |= (1<<DOG_SPI_CS);
+   DOG_SPI_DDR |= (1<<DOG_SPI_A0);
+   DOG_SPI_DDR |= (1<<DOG_SPI_RST);
+   
+   _delay_ms(5);
+   //display_init();
+   
    
 }
 
@@ -117,6 +126,8 @@ int main (void)
 			if ((loopCount1 >0xFFFE)  )
 			{
 				{
+               //OSZI_B_TOGG();
+               display_write_int('i++',1);
 					LOOPLED_PORT ^= (1<<LOOPLED_PIN);
 					loopCount1=0;
 				}

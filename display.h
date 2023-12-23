@@ -52,8 +52,11 @@
 #define DOG_SPI_A0       0
 #define DOG_SPI_PWM      1
 #define DOG_SPI_CS       2 // SS
-#define DOG_SPI_SCK      5 // SCK
 #define DOG_SPI_MOSI     3 // MOSI
+
+#define DOG_SPI_SCK      5 // SCK
+#define DOG_SPI_RST     6  // Reset
+
 
 
 
@@ -62,6 +65,9 @@
 
 #define SPI_A0_HI()   DOG_SPI_PORT |= (1<<DOG_SPI_A0)
 #define SPI_A0_LO()   DOG_SPI_PORT &= ~(1<< DOG_SPI_A0)
+
+#define SPI_RST_HI()   DOG_SPI_PORT |= (1<<DOG_SPI_RST)
+#define SPI_RST_LO()   DOG_SPI_PORT &= ~(1<< DOG_SPI_RST)
 
 #define MAX_SPI_COUNT 100
 
@@ -141,7 +147,7 @@ const uint8_t PROGMEM  expoarray25[3][26] ={
 {0x00,0x00,0x00,0x00,0x00,0x01,0x01,0x01,0x01,0x01,0x02,0x02,0x03,0x03,0x04,0x05,0x06,0x07,0x09,0x0B,0x0D,0x0F,0x12,0x16,0x1B,0x20}
 };
 
-void display_init(void);
+uint8_t  display_init(void);
 void display_mem(PGM_P pointer);
 void display_clear(void);
 void display_go_to (unsigned char, unsigned char);
