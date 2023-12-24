@@ -91,9 +91,21 @@ void slaveinit(void)
    spi_init();
    _delay_ms(1);
    
+   OSZIDDR |= (1<<OSZI_PULS_A);
+   OSZIPORT |= (1<<OSZI_PULS_A);
+   OSZIDDR |= (1<<OSZI_PULS_B);
+   OSZIPORT |= (1<<OSZI_PULS_B);
+   
+   
+   
    DOG_SPI_DDR |= (1<<DOG_SPI_CS);
    DOG_SPI_DDR |= (1<<DOG_SPI_A0);
    DOG_SPI_DDR |= (1<<DOG_SPI_RST);
+   
+   DOG_SPI_PORT |= (1<<DOG_SPI_CS); // HI
+   DOG_SPI_PORT |= (1<<DOG_SPI_A0); // HI
+   DOG_SPI_PORT |= (1<<DOG_SPI_RST);
+
    
    _delay_ms(5);
    //display_init();

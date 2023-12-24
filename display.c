@@ -141,7 +141,7 @@ const char marke_dick[8]=
 
 
 // EA DOGL128 // Text
-/*
+
 const volatile char DISPLAY_INIT[] =
 {
    0x40,// Display start line set --> 0
@@ -165,10 +165,10 @@ const volatile char DISPLAY_INIT[] =
    0x00, // ...
    0xAF
 };  // Display on/off
-*/
+
 // von DOGM204_SSD1803A_SPI
 
-const char DISPLAY_INIT[] = {0x3A,0x09,0x06,0x1E,0x39,0x1B,0x6E,0x57,0x72,0x38,0x0F};
+//const char DISPLAY_INIT[] = {0x3A,0x09,0x06,0x1E,0x39,0x1B,0x6E,0x57,0x72,0x38,0x0F};
 
 
 //const char DISPLAY_INIT[] = {0xC8,0xA1,0xA6,0xA2,0x2F,0x26,0x81,0x25,0xAC,0x00,0xAF};
@@ -1163,8 +1163,9 @@ uint8_t display_init()
       
       uint8_t a = display_write_byte(CMD,DISPLAY_INIT[tmp]);
       initerr += a;
-      _delay_us(1);
+      _delay_us(2);
 	}
+   
    SPI_CS_HI();
 	display_clear();
 	

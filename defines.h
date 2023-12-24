@@ -9,7 +9,7 @@
 
 
 #define OSZIPORT           PORTD
-#define OSZIPORTDDR        DDRD
+#define OSZIDDR        DDRD
 #define OSZIPORTPIN        PIND
 #define OSZI_PULS_A        6
 #define OSZI_PULS_B        7
