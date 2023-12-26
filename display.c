@@ -141,7 +141,7 @@ const char marke_dick[8]=
 
 
 // EA DOGL128 // Text
-
+/*
 const volatile char DISPLAY_INIT[] =
 {
    0x40,// Display start line set --> 0
@@ -160,11 +160,18 @@ const volatile char DISPLAY_INIT[] =
    0x00, // ...
    0x27, //
    0x81, // Contrast set
-   0x18,
+   0x10,
    0xAC, // Static indicator set --> no indicator
    0x00, // ...
    0xAF
 };  // Display on/off
+ */
+// Orientierung 6:00 Uhr
+const char DISPLAY_INIT[] = {0x40, 0xA0, 0xC8, 0xA6, 0xA2, 0x2F, 0xF8, 0x00, 0x27, 0x81, 0x10, 0xAC, 0x00, 0xAF};
+
+// Orientierung 12:00 Uhr: offset 4 zu x addieren: RANDLINKS
+//const char DISPLAY_INIT[] = {0x40, 0xA1, 0xC0, 0xA6, 0xA2, 0x2F, 0xF8, 0x00, 0x27, 0x81, 0x10, 0xAC, 0x00, 0xAF};
+
 
 // von DOGM204_SSD1803A_SPI
 
@@ -210,6 +217,37 @@ void lcd_command(uint8_t cmd) {
   LCD_UNSELECT();
   }
   */
+
+void setlogscreen(void)
+{
+   resetRegister();
+   posregister[0][0] = itemtab[5] | (1 << 8);// Laufzeit Anzeige
+   char_x=RANDLINKS;
+   char_y = 1;
+   char_height_mul = 1;
+   char_width_mul = 1;
+   display_go_to(char_x,char_y);
+   strcpy_P(titelbuffer, (PGM_P)pgm_read_word(&(TitelTable[0])));
+   char_height_mul = 1;
+   //char_width_mul = 2;
+   display_write_str(titelbuffer,1);
+
+   char_x=RANDLINKS;
+   char_y = 2;
+   display_write_str("Zeile 2",2);
+   char_height_mul = 1;
+   char_width_mul = 1;
+   //display_go_to(0,4);
+   char_x = 8;
+   char_y = 5;
+   display_write_int(char_x,1);
+   display_write_str("++Zeile 3++",1);
+   display_write_int(char_x,1);
+   char_x += 2;
+   display_write_int(char_x,2);
+   display_write_spannung(124,1);
+   
+}
 
 void sethomescreen(void)
 {
@@ -309,6 +347,10 @@ void update_time(void)
 {
    char_x = posregister[0][0] & 0x00FF;
    char_y= (posregister[0][0] & 0xFF00)>>8;
+   
+   char_x = 24;
+   char_y = 4;
+   
    char_height_mul = 1;
    char_width_mul = 1;
    
@@ -1124,7 +1166,7 @@ uint8_t display_write_byte(unsigned cmd_data, unsigned char data)
 	SPDR = data;
 	while((!(SPSR & (1<<SPIF))) && spicounter)
    {
-      OSZI_A_TOGG();
+      //OSZI_A_TOGG();
       spicounter--;
    }
    OSZI_B_HI(); 
@@ -1163,7 +1205,7 @@ uint8_t display_init()
       
       uint8_t a = display_write_byte(CMD,DISPLAY_INIT[tmp]);
       initerr += a;
-      _delay_us(2);
+      _delay_us(1);
 	}
    
    SPI_CS_HI();
@@ -1225,6 +1267,7 @@ void display_go_to (unsigned char x, unsigned char y)
   
 	display_write_byte(CMD,DISPLAY_COL_ADDRESS_LSB | ((x) & 0x0F));
 	return;
+
 }
 
 

@@ -22,6 +22,8 @@
 
 #include "display.c"
 
+#include "text.h"
+
 
 
 uint16_t loopCount0=0;
@@ -108,7 +110,7 @@ void slaveinit(void)
 
    
    _delay_ms(5);
-   //display_init();
+   display_init();
    
    
 }
@@ -122,7 +124,16 @@ int main (void)
 	_delay_ms(1000);
 	uint8_t i=0;
 
-#pragma mark while
+   display_go_to(16,8);
+   
+   //display_akkuanzeige(24);
+   
+   //sethomescreen();
+   char_x = 24;
+   char_y = 4;
+   display_go_to(char_x,char_y);
+   setlogscreen();
+// MARK: while
 	while (1) 
 	{
 		
@@ -137,13 +148,35 @@ int main (void)
 			
 			if ((loopCount1 >0xFFFE)  )
 			{
+            loopCount2++;
+            if(loopCount2 >0x03)
 				{
+               loopCount2=0;
                //OSZI_B_TOGG();
-               display_write_int('i++',1);
+               //display_go_to(16,8);
+               //display_write_int(i++,2);
 					LOOPLED_PORT ^= (1<<LOOPLED_PIN);
-					loopCount1=0;
+               
+               char_x=RANDLINKS+100;
+               char_y = 1;
+               char_height_mul = 1;
+               char_width_mul = 1;
+               display_go_to(char_x+1,2);
+               //display_write_int(i++,2);
+               
+               //update_time();
+               display_write_min_sek(motorsekunde , 1);
+               
+               motorsekunde++;
+               if(motorsekunde > 59)
+               {
+                  motorsekunde = 0;
+                  motorminute++;
+               }
+               
+					
 				}
-
+            
 			}
 			
 			loopCount0 =0;
