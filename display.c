@@ -1133,21 +1133,7 @@ void display_back_char (void)
 //##############################################################################################
 uint8_t display_write_byte(unsigned cmd_data, unsigned char data) 
 {
-   /*
-   if(cmd_data == 0)
-	{
-		A0_HI;
-	}
-	else
-	{
-		A0_LO;
-	}
-   
-   
-   spi_out(data);
-    */
-   
-   // Hardware-SPI
+    // Hardware-SPI
    
    SPI_CS_LO();
    
